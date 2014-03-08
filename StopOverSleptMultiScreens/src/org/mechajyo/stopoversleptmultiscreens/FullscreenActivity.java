@@ -92,7 +92,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	
 	SandV sv = SandV.SOUND_AND_VIBELATION;
 	
-	Location now;
+	Location now = null;
 	Address  target = null;
 	String   query = "";
 	
@@ -418,6 +418,9 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	public float calcDistance(double lat, double lon, Location here)
 	{
 		float [] results = new float[3];
+		if (here == null) {
+			return (float)4649.0; // よろしく（magic number）
+		}
 		Location.distanceBetween(here.getLatitude(), here.getLongitude(), lat, lon, results);
 		return results[0];
 	}
