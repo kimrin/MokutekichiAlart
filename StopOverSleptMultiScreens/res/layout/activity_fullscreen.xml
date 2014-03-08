@@ -1,0 +1,130 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    tools:context=".FullscreenActivity" >
+
+    <!--
+         The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc.
+    -->
+    <TextView
+        android:id="@+id/fullscreen_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:keepScreenOn="true"
+        android:text="@string/dummy_content"
+        android:textColor="#33b5e5"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        
+
+        
+        
+         />
+
+    <!--
+         This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows.
+    -->
+        	<SearchView
+        	    android:id="@+id/searchView1"
+        	    android:layout_width="match_parent"
+        	    android:layout_height="wrap_content"
+        	    android:layout_marginTop="240dp"
+        	    android:iconifiedByDefault="false" >
+
+        	</SearchView>
+
+        	<TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+     	    android:layout_marginTop="280dp"
+     	    android:layout_marginLeft="250dp"
+            android:text="へGO!"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        	
+        	
+        	<Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="220dp"
+            android:layout_marginTop="80dp"
+            android:text="Kmになったら"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+       <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="160dp" />
+        		
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="220dp"
+            android:layout_marginTop="160dp"
+            android:text="でお知らせ☆"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+       
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="320dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        <Button
+                android:id="@+id/go_button"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+	            android:layout_marginTop="400dp"
+                android:onClick="sendMessageGo"
+                android:background="@drawable/image_stateful"
+                android:text="" />
+        
+        <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/app_name"
+        android:fitsSystemWindows="true" >
+
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+            style="?buttonBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@color/black_overlay"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent" >
+
+            
+            <Button
+                android:id="@+id/dummy_button"
+                style="?buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="sendMessage"
+                android:text="@string/dummy_button" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</FrameLayout>
