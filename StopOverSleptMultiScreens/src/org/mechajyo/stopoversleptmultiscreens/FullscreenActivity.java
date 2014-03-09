@@ -33,6 +33,8 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -53,7 +55,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
 	 */
-	private static final boolean AUTO_HIDE = true;
+	private static final boolean AUTO_HIDE = false;
 
 	/**
 	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -105,7 +107,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
-        SearchView sview = (SearchView) findViewById(R.id.searchView1);
+        final SearchView sview = (SearchView) findViewById(R.id.searchView1);
         // SearchViewの初期表示状態を設定
         sview.setIconifiedByDefault(false);
  
@@ -113,7 +115,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
         sview.setOnQueryTextListener((OnQueryTextListener) this);
  
         // SearchViewのSubmitボタンを使用不可にする
-        sview.setSubmitButtonEnabled(true);
+        sview.setSubmitButtonEnabled(false);
  
         // SearchViewに何も入力していない時のテキストを設定
         sview.setQueryHint("検索文字を入力して下さい。");
@@ -147,74 +149,76 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
-		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
-				HIDER_FLAGS);
-		mSystemUiHider.setup();
-		mSystemUiHider
-				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
-					// Cached values.
-					int mControlsHeight;
-					int mShortAnimTime;
-
-					@Override
-					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-					public void onVisibilityChange(boolean visible) {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-							// If the ViewPropertyAnimator API is available
-							// (Honeycomb MR2 and later), use it to animate the
-							// in-layout UI controls at the bottom of the
-							// screen.
-							if (mControlsHeight == 0) {
-								mControlsHeight = controlsView.getHeight();
-							}
-							if (mShortAnimTime == 0) {
-								mShortAnimTime = getResources().getInteger(
-										android.R.integer.config_shortAnimTime);
-							}
-							controlsView
-									.animate()
-									.translationY(visible ? 0 : mControlsHeight)
-									.setDuration(mShortAnimTime);
-						} else {
-							// If the ViewPropertyAnimator APIs aren't
-							// available, simply show or hide the in-layout UI
-							// controls.
-							controlsView.setVisibility(visible ? View.VISIBLE
-									: View.GONE);
-						}
-
-						if (visible && AUTO_HIDE) {
-							// Schedule a hide().
-							delayedHide(AUTO_HIDE_DELAY_MILLIS);
-						}
-					}
-				});
+//		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
+//				HIDER_FLAGS);
+//		mSystemUiHider.setup();
+//		mSystemUiHider
+//				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
+//					// Cached values.
+//					int mControlsHeight;
+//					int mShortAnimTime;
+//
+//					@Override
+//					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+//					public void onVisibilityChange(boolean visible) {
+//						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+//							// If the ViewPropertyAnimator API is available
+//							// (Honeycomb MR2 and later), use it to animate the
+//							// in-layout UI controls at the bottom of the
+//							// screen.
+//							if (mControlsHeight == 0) {
+//								mControlsHeight = controlsView.getHeight();
+//							}
+//							if (mShortAnimTime == 0) {
+//								mShortAnimTime = getResources().getInteger(
+//										android.R.integer.config_shortAnimTime);
+//							}
+//							controlsView
+//									.animate()
+//									.translationY(visible ? 0 : mControlsHeight)
+//									.setDuration(mShortAnimTime);
+//						} else {
+//							// If the ViewPropertyAnimator APIs aren't
+//							// available, simply show or hide the in-layout UI
+//							// controls.
+//							controlsView.setVisibility(visible ? View.VISIBLE
+//									: View.GONE);
+//						}
+//
+//						if (visible && AUTO_HIDE) {
+//							// Schedule a hide().
+//							delayedHide(AUTO_HIDE_DELAY_MILLIS);
+//						}
+//					}
+//				});
 
 		// Set up the user interaction to manually show or hide the system UI.
 		contentView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (TOGGLE_ON_CLICK) {
-					mSystemUiHider.toggle();
-				} else {
-					mSystemUiHider.show();
-				}
+//				if (TOGGLE_ON_CLICK) {
+//					mSystemUiHider.toggle();
+//				} else {
+//					mSystemUiHider.show();
+//				}
 			}
 		});
 
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
-		findViewById(R.id.dummy_button).setOnTouchListener(
-				mDelayHideTouchListener);
+//		findViewById(R.id.dummy_button).setOnTouchListener(
+//				mDelayHideTouchListener);
 		
 		
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
          // アイテムを追加します
-        adapter.add("0.5");
+        adapter.add("0.01");
+        adapter.add("0.1");
         adapter.add("1.0");
         adapter.add("2.0");
+        adapter.add("5.0");
         Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
         // アダプターを設定します
         spinner1.setAdapter(adapter);
@@ -226,6 +230,8 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
                  Spinner sp = (Spinner) parent;
                  String item = (String) sp.getSelectedItem();
                  fsact.okiro_km = Double.parseDouble(item);
+                 InputMethodManager imm=(InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                 imm.hideSoftInputFromWindow(sview.getWindowToken(), 0);
             }
 
 			@Override
@@ -260,6 +266,8 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
                  } else {
                  	//
                  }
+                 InputMethodManager imm=(InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                 imm.hideSoftInputFromWindow(sview.getWindowToken(), 0);
             }
 
 			@Override
@@ -268,6 +276,48 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 				
 			}
         });
+
+        ArrayAdapter<String> adapter3 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+        adapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+         // アイテムを追加します
+        adapter3.add("ぴったり");
+        adapter3.add("ほぼ");
+        adapter3.add("たぶん（エコ）");
+        Spinner spinner0 = (Spinner) findViewById(R.id.spinner0);
+        // アダプターを設定します
+        spinner0.setAdapter(adapter3);
+        // リストビューのアイテムがクリックされた時に呼び出されるコールバックリスナーを登録します
+        spinner0.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                int position, long id) {
+                Spinner sp = (Spinner) parent;
+                String item = (String) sp.getSelectedItem();
+ 				if (item.equals("ぴったり")) {
+ 					fsact.mLRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+ 				} else if (item.equals("ほぼ")) {
+ 					fsact.mLRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+ 				} else { // たぶん（えこw）
+ 					fsact.mLRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
+ 				}
+ 				
+ 				fsact.mLClient.requestLocationUpdates(mLRequest, fsact);
+                InputMethodManager imm=(InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(sview.getWindowToken(), 0);
+            }
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+			}
+        });
+        spinner0.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm=(InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return false;
+            }
+        }) ;
         final int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (result != ConnectionResult.SUCCESS) {
             Toast.makeText(this, "Google Play service is not available (status=" + result + ")", Toast.LENGTH_LONG).show();
@@ -358,7 +408,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	Runnable mHideRunnable = new Runnable() {
 		@Override
 		public void run() {
-			mSystemUiHider.hide();
+			//mSystemUiHider.hide();
 		}
 	};
 
@@ -367,8 +417,8 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	 * previously scheduled calls.
 	 */
 	private void delayedHide(int delayMillis) {
-		mHideHandler.removeCallbacks(mHideRunnable);
-		mHideHandler.postDelayed(mHideRunnable, delayMillis);
+		//mHideHandler.removeCallbacks(mHideRunnable);
+		//mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
 
 	@Override
@@ -483,7 +533,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 		// Start without a delay
 		// Each element then alternates between vibrate, sleep, vibrate, sleep...
 		// long[] pattern = {0, 100, 1000, 300, 200, 100, 500, 200, 100};
-		long[] pattern = {1000,2500,1000,2500,1000,2500}; 
+		long[] pattern = {1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500,1000,2500}; 
 		// The '-1' here means to vibrate once
 		// '0' would make the pattern vibrate indefinitely
 		if ((sv == SandV.VIBELATION_ONLY)||(sv == SandV.SOUND_AND_VIBELATION)) {

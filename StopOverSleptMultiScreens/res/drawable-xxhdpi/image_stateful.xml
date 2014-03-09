@@ -5,13 +5,6 @@
        android:drawable="@drawable/stop_button2"/>  
    <item   
        android:state_pressed="true"   
-       android:state_enabled="false"   
        android:drawable="@drawable/stop_button2ww" />  
-   <item   
-       android:state_enabled="false"   
-       android:drawable="@drawable/stop_button2" />  
-   <item   
-       android:state_active="true"   
-       android:drawable="@drawable/stop_button2" />
    <item android:drawable="@drawable/stop_button2wwthin"/>  
 </selector>  
