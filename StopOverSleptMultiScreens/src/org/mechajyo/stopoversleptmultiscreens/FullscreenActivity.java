@@ -1,5 +1,6 @@
 package org.mechajyo.stopoversleptmultiscreens;
 
+// Rはレイアウト関係のフィールドを参照するために必要
 import org.mechajyo.stopoversleptmultiscreens.R;
 
 import java.io.IOException;
@@ -44,16 +45,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SearchView.OnQueryTextListener;
 
+
+/**
+ *  *  バックスラッシュアスタリスク×2とバックスラッシュアスタリスクで囲むとドキュメントになる．
+ *  クラスやメソッド，フィールドなどほとんどの要素と，すぐ上にあるドキュメントを対応付けることができる．(Javadoc参照)
+ *  Androidでは，一つの画面が一つのActivityに対応する．
+ *  on～～メソッドでイベント発生．
+ *  onCreate()初期化
+ *  setContentViewはUIを形ずくる．
+ */
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
- * 
  * @see SystemUiHider
+ * FullscreenActivityのどこでも見られるクラス変数を定義する．
+ * implements~~で，AというクラスのメソッドとBというクラスのメソッドを使えるようにする．
  */
 public class FullscreenActivity extends Activity implements LocationListener, ConnectionCallbacks, OnConnectionFailedListener, SearchView.OnQueryTextListener{
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
+	 * staticでインスタンスになった時にも変更できない値．
 	 */
 	private static final boolean AUTO_HIDE = false;
 
@@ -78,9 +91,9 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
-	double okiro_km = 0.0;
-	private LocationClient mLClient;
-	private LocationRequest mLRequest;
+	double okiro_km = 0.0; 	// okiro_kmは半径
+	private LocationClient mLClient; //位置取得に関するクライアント
+	private LocationRequest mLRequest; //どのくらいの頻度で取得するかのリクエスト．LocationClientの時の引数的なものになるのでは？
 	private Vibrator viberator = null;
 	
 	private boolean firstVibe = true;
@@ -101,15 +114,15 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	@SuppressLint({ "WorldReadableFiles", "WorldWriteableFiles" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		final FullscreenActivity fsact = this;
-		setContentView(R.layout.activity_fullscreen);
+		super.onCreate(savedInstanceState); //super.onCreateで親の中の同じメソッドが呼び出される．
+		final FullscreenActivity fsact = this; //Listener指定するときに便利なのでよんでいる．→thisが使えない時ように用意．バイブレーションを止めるときに使用している．
+		setContentView(R.layout.activity_fullscreen); //res/layout/activity_fullscreenの中のレイアウトをUIに指定．xmlで指定したものがR.javaで実体化する．
 
-		final View controlsView = findViewById(R.id.fullscreen_content_controls);
+		final View controlsView = findViewById(R.id.fullscreen_content_controls); //xml内の要素に対応するR.javaでのインデックスを取得して，クラスのインスタンスを取得
 		final View contentView = findViewById(R.id.fullscreen_content);
         final SearchView sview = (SearchView) findViewById(R.id.searchView1);
         // SearchViewの初期表示状態を設定
-        sview.setIconifiedByDefault(false);
+        sview.setIconifiedByDefault(false); //検索窓をアイコン化しない
  
         // SearchViewにOnQueryChangeListenerを設定
         sview.setOnQueryTextListener((OnQueryTextListener) this);
@@ -121,32 +134,35 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
         sview.setQueryHint("検索文字を入力して下さい。");
 
         // Get instance of Vibrator from current Context
-		this.viberator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+		this.viberator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE); //getSystemServiceに対して引数を指定することで，VIBRATOR_SERVICEのインスタンスを取得
 
     	@SuppressWarnings("deprecation")
 		SharedPreferences pref =
     			getSharedPreferences("pref",MODE_WORLD_READABLE|MODE_WORLD_WRITEABLE);
-    	String str = pref.getString("target","");
+    	String str = pref.getString("target",""); //preferenceのキー(target)に対応する値を取得
     	Log.v("SAVE",str);
+    	
+    	//strが空ではなかったら，sview.setQueryをサブミット（前回の検索クエリが残っていたら検索開始）
     	if (! str.equals("")) {
     		sview.setQuery(str,true);
     	}
-
+    	
+    	//STOPボタン（go_button）をクリックしたときの振る舞いを記述．ここでしか使わないメソッドなので，implementを使わず，無名のクラスを作っている．
     	final Button button = (Button) findViewById(R.id.go_button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Do something in response to button click
-        		if (sv != SandV.SOUND_ONLY) {
-        			fsact.viberator.cancel();
+        		if (sv != SandV.SOUND_ONLY) { //svには，音かバイブ化かが記述されているので，svがSOUND_ONLYのとき以外は，バイブを止める．
+        			fsact.viberator.cancel(); //ここでは，無名クラスがthisになっているため，this.viberater.cancel()にできない．
         		}
-        		if (mp.isPlaying()) {
+        		if (mp.isPlaying()) { //mp(音楽)が演奏中であったら，止める．
         			mp.pause();
         		}
             }
         });
         
 
-
+        // 画面タッチしたときに，タブが出てくるギミック部分
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 //		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
@@ -210,7 +226,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 //		findViewById(R.id.dummy_button).setOnTouchListener(
 //				mDelayHideTouchListener);
 		
-		
+		// ArrayAdapterに入る型は<String>のみと指定．adapterの中にUIに関するクラスが入る．
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
          // アイテムを追加します
@@ -221,16 +237,16 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
         adapter.add("5.0");
         Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
         // アダプターを設定します
-        spinner1.setAdapter(adapter);
+        spinner1.setAdapter(adapter); //↑までで，アイテム（ドロップダウンリスト）を動的に作成
         // リストビューのアイテムがクリックされた時に呼び出されるコールバックリスナーを登録します
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
+            public void onItemSelected(AdapterView<?> parent, View view, //アイテムが選択された時の挙動を設定
                     int position, long id) {
                  Spinner sp = (Spinner) parent;
-                 String item = (String) sp.getSelectedItem();
-                 fsact.okiro_km = Double.parseDouble(item);
-                 InputMethodManager imm=(InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                 String item = (String) sp.getSelectedItem();// itemに，0.01など，選択された距離が文字列で入る．
+                 fsact.okiro_km = Double.parseDouble(item); //itemの値を文字列から数字にしてokiro_kmへ．DoubleクラスのparseDoubleメソッド(スタティックメソッド)を使用．
+                 InputMethodManager imm=(InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE); //プルダウンを選択したときに，ソフトキーが出てくるのを阻止する．
                  imm.hideSoftInputFromWindow(sview.getWindowToken(), 0);
             }
 
@@ -301,7 +317,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
  					fsact.mLRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
  				}
  				
- 				fsact.mLClient.requestLocationUpdates(mLRequest, fsact);
+ 				fsact.mLClient.requestLocationUpdates(mLRequest, fsact); //mLRequestに設定をすべて入れる．
                 InputMethodManager imm=(InputMethodManager)getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(sview.getWindowToken(), 0);
             }
@@ -310,6 +326,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 				// TODO Auto-generated method stub
 			}
         });
+        //以下のspinner0.setOnTouchListerの内容を行っているので，いらない．
         spinner0.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -318,20 +335,27 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
                 return false;
             }
         }) ;
+        
+        //GooglePlayServise（古いバージョンではない場合もあるので）から，使えない場合はアプリ終了する．
         final int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
         if (result != ConnectionResult.SUCCESS) {
             Toast.makeText(this, "Google Play service is not available (status=" + result + ")", Toast.LENGTH_LONG).show();
             finish();
         }
-        this.mLRequest = LocationRequest.create();
-        this.mLRequest.setInterval(5000);
+        
+        //初期値をセット
+        this.mLRequest = LocationRequest.create(); //staticメソッド
+        this.mLRequest.setInterval(2000); // 計測間隔をミリセカンドで設定
         this.mLRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         this.mLRequest.setFastestInterval(1000);
-        this.mLClient = new LocationClient(this,this,this);
+        this.mLClient = new LocationClient(this,this,this); //3つの種類のコールバックを指定
 
-        this.mp = MediaPlayer.create(this, R.raw.okiro3);
+        this.mp = MediaPlayer.create(this, R.raw.okiro3); //okiro3の中のリソースをmpに関連付ける
 
     }
+	
+	// onPause()になったときに，preferenceにthis.queryの最新のクエリを保存．
+	//状態遷移で，画面から消えたときに，クエリを保存．
     @SuppressLint({ "WorldReadableFiles", "WorldWriteableFiles" })
 	@Override
     protected void onPause(){
@@ -344,6 +368,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
         Log.v("SAVE","SAVE "+this.query);
     }
     
+    // 画面が戻ってきたときに，preferenceに残っていたクエリをセットする．
     @SuppressLint({ "WorldReadableFiles", "WorldWriteableFiles" })
 	@Override
     protected void onRestart() {
@@ -356,7 +381,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
     }
     
 
-	
+	// mLClientが既に設定済みと仮定して，onResume()の時に，mLClient()にコネクトGPSの動作が開始される．→自分なかにあるコールバックのonLocationChangedなどにイベントがはいるようになる．
 	@Override
     protected void onResume(){
         super.onResume();
@@ -364,7 +389,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	
 	}
 
-	
+	// MAPボタンを押したときの動作を定義．googlemapの画面へ遷移する．
 	/** Called when the user clicks the Send button */
 	public void sendMessage(View view) {
 	    // Do something in response to button
@@ -373,6 +398,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 		startActivity(intent);
 	}
 	
+	//STOPボタン（go_button）を押した時の動作．上で既に定義したので，ここはログ出すだけにしている．
 	/** Called when the user clicks the Send button */
 	public void sendMessageGo(View view) {
 	    // Do something in response to button
@@ -421,12 +447,14 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 		//mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
 
+	// LocationClientが接続失敗したときに呼ばれるコールバック
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	// GPSの取得が開始される．mLRequestの値をにしたがって，requestLocationUdateが開始される．
 	@Override
 	public void onConnected(Bundle arg0) {
 		// TODO Auto-generated method stub
@@ -435,12 +463,14 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	
 	}
 
+	// 接続を解除したときに呼ばれる
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
 		
 	}
 	
+	//Activityのコールバック．画面が見えなくなった時に，onStop()が呼ばれる．そして接続を切ってる．
 	@Override
 	public void onStop()
 	{
@@ -448,17 +478,18 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 		super.onStop();
 	}
 
+	// ここで場所を取得．指定した間隔ごとに呼ばれる．
 	@Override
 	public void onLocationChanged(Location arg0) {
 		// TODO Auto-generated method stub
-		this.now = arg0;
-		Log.v("GEO",arg0.toString());
-		if (this.target != null) {
-			float km = (float) (calcDistance(target.getLatitude(),target.getLongitude(),this.now) / 1000.0);
-			TextView textView4 = (TextView)findViewById(R.id.textView4);
-			textView4.setText("あと"+ Float.toString(km)+"Km");
+		this.now = arg0; // nowに現在地が入る
+		Log.v("GEO",arg0.toString()); //GEOタグとして，arg0の文字列化したものが入る
+		if (this.target != null) { //targetはgeocordingした結果
+			float km = (float) (calcDistance(target.getLatitude(),target.getLongitude(),this.now) / 1000.0); // kmに距離を入れる
+			TextView textView4 = (TextView)findViewById(R.id.textView4); // TextView4のIDを拾って，インスタンスをもらってくる
+			textView4.setText("あと"+ Float.toString(km)+"Km"); // TextView4の値を文字列に変換して表示
 
-			if ((km < okiro_km)&&(this.firstVibe)) {
+			if ((km < okiro_km)&&(this.firstVibe)) { // 設定した圏内に突入して＆＆最初に計測されたときに，バイブを鳴らして，フラグをfalse
 				this.firstVibe = false;
 				vibe();
 			}
@@ -469,13 +500,14 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	{
 		float [] results = new float[3];
 		if (here == null) {
-			return (float)4649.0; // よろしく（magic number）
+			return (float)4649.0; // よろしく（magic number） //現在地が取れてないときは，適当な値を返す
 		}
-		Location.distanceBetween(here.getLatitude(), here.getLongitude(), lat, lon, results);
+		Location.distanceBetween(here.getLatitude(), here.getLongitude(), lat, lon, results); //現在地の緯度経度と対象地の緯度経度から距離を計算しresultsに返す
 		return results[0];
 	}
 
 
+	//　クエリ補完
 	@Override
 	public boolean onQueryTextChange(String arg0) {
 		// TODO Auto-generated method stub
@@ -483,10 +515,11 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 	}
 
 
+	// クエリが入力されたときに，位置の取得と距離を計算
 	@Override
 	public boolean onQueryTextSubmit(String arg0) {
 		// TODO Auto-generated method stub
-		this.query = String.copyValueOf(arg0.toCharArray());
+		this.query = String.copyValueOf(arg0.toCharArray()); //stringをコピーしてクエリに入れる
 		
 		TextView textView4 = (TextView)findViewById(R.id.textView4);
         Geocoder geocoder = new Geocoder( this, Locale.getDefault());
@@ -521,6 +554,7 @@ public class FullscreenActivity extends Activity implements LocationListener, Co
 		return false;
 	}
 	
+	// 音とバイブ
 	public void vibe()
 	{
 		if ((sv == SandV.SOUND_AND_VIBELATION)||(sv == SandV.SOUND_ONLY)) {		

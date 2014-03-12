@@ -8,7 +8,7 @@
     <!--
          The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc.
+         TextureView, etc.背景の文字
     -->
     <TextView
         android:id="@+id/fullscreen_content"
@@ -96,6 +96,9 @@
             android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge" />
         
+            <!--
+            image_statefulの中で，クリックしたときの絵の変化を記述
+                -->
         <Button
                 android:id="@+id/go_button"
                 android:layout_width="match_parent"
